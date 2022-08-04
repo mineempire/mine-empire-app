@@ -213,9 +213,13 @@ const Navbar = () => {
               </Link>
             </NavItem>
             <NavItem>
-              <Link to="/rewards">
-                <NavLinks onClick={handleClick}>Rewards</NavLinks>
-              </Link>
+              <a
+                href="https://fi.mineempire.io"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <NavLinks>Finance</NavLinks>
+              </a>
             </NavItem>
           </NavMenu>
           <ConnectWallet>

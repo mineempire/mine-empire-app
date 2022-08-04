@@ -518,7 +518,13 @@ const DashboardBody = () => {
               </TokenInfoTitleContainer>
               <TokenInfoTitleContainer>
                 <img src="../../assets/coinmarketcap-icon.png" alt="" />
-                <img src="../../assets/coingecko-icon.png" alt="" />
+                <a
+                  href="https://www.coingecko.com/en/coins/mine-empire"
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  <img src="../../assets/coingecko-icon.png" alt="" />
+                </a>
                 <CardFeature onClick={handleAddGEMToMM}>
                   <img src="../../assets/svg/plus.svg" alt="" />
                   <img src="../../assets/metamask-icon.png" alt="" />
@@ -570,7 +576,13 @@ const DashboardBody = () => {
               </TokenInfoTitleContainer>
               <TokenInfoTitleContainer>
                 <img src="../../assets/coinmarketcap-icon.png" alt="" />
-                <img src="../../assets/coingecko-icon.png" alt="" />
+                <a
+                  href="https://www.coingecko.com/en/coins/cosmic-cash"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <img src="../../assets/coingecko-icon.png" alt="" />
+                </a>
                 <CardFeature onClick={handleAddCSCToMM}>
                   <img src="../../assets/svg/plus.svg" alt="" />
                   <img src="../../assets/metamask-icon.png" alt="" />

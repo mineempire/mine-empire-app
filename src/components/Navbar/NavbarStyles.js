@@ -89,6 +89,10 @@ export const NavItem = styled.li`
       border: none;
     }
   }
+  a {
+    color: white;
+    text-decoration: none;
+  }
 `;
 
 export const NavLinks = styled.span`
