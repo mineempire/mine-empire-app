@@ -35,6 +35,7 @@ import { CybeleCapacity } from "../../stats/CybeleStats";
 const CosmosBody = () => {
   const [connected, setConnected] = useState(false);
   const [ironProduction, setIronProduction] = useState(0);
+  const [ironBaseProduction, setIronBaseProduction] = useState(0);
   const [cscProduction, setCscProduction] = useState(0);
   const [ironReadyToCollect, setIronReadyToCollect] = useState(0);
   const [gadesLevel, setGadesLevel] = useState(1);
@@ -42,6 +43,7 @@ const CosmosBody = () => {
   const [cosmicCashPrice, setCosmicCashPrice] = useState(0);
   const [launchTime, setLaunchTime] = useState(0);
   const [cobaltProduction, setCobaltProduction] = useState(0);
+  const [cobaltBaseProduction, setCobaltBaseProduction] = useState(0);
   const [cscProductionOberon, setCscProductionOberon] = useState(0);
   const [oberonLevel, setOberonLevel] = useState(0);
   const [oberonCapacity, setOberonCapacity] = useState(0);
@@ -50,6 +52,7 @@ const CosmosBody = () => {
   const [cybeleCapacity, setCybeleCapacity] = useState(0);
   const [silverReadyToCollect, setSilverReadyToCollect] = useState(0);
   const [silverProduction, setSilverProduction] = useState(0);
+  const [silverBaseProduction, setSilverBaseProduction] = useState(0);
   const [cscProductionCybele, setCscProductionCybele] = useState(0);
   const { activate } = useWeb3React();
 
@@ -113,6 +116,7 @@ const CosmosBody = () => {
       .call()
       .then((result) => {
         baseProduction = +ethers.utils.formatEther(result);
+        setIronBaseProduction(Math.ceil(baseProduction * 60 * 60 * 24));
       });
     await gadesContract.methods
       .getStake(addr)
@@ -152,6 +156,7 @@ const CosmosBody = () => {
       .call()
       .then((result) => {
         baseProduction = +ethers.utils.formatEther(result);
+        setCobaltBaseProduction(baseProduction * 60 * 60 * 24);
       });
     await oberonContract.methods
       .stakes(addr)
@@ -191,6 +196,7 @@ const CosmosBody = () => {
       .call()
       .then((result) => {
         baseProduction = +ethers.utils.formatEther(result);
+        setSilverBaseProduction(baseProduction * 60 * 60 * 24);
       });
     await cybeleContract.methods
       .stakes(addr)
@@ -290,13 +296,15 @@ const CosmosBody = () => {
               <PlanetCardProductionInfo>
                 <img src="../../assets/iron60px.png" alt="" />
                 <h3 id="production">Production:</h3>
-                <h3 id="amount">3405 / Day</h3>
+                <h3 id="amount">{ironBaseProduction} / Day</h3>
               </PlanetCardProductionInfo>
               <CardStats>
                 <h3 id="description">Your Production</h3>
                 <h3 id="stat">{ironProduction} Iron / Day</h3>
                 <h3 id="description">Max Production</h3>
-                <h3 id="stat">121.6k Iron / Day</h3>
+                <h3 id="stat">
+                  {Math.ceil(ironBaseProduction * 35.7)} Iron / Day
+                </h3>
                 <h3 id="description">Your USD Equiv</h3>
                 <h3 id="stat">
                   ${Math.floor(cscProduction * cosmicCashPrice * 100) / 100} /
@@ -336,13 +344,15 @@ const CosmosBody = () => {
               <PlanetCardProductionInfo>
                 <img src="../../assets/cobalt.png" alt="" />
                 <h3 id="production">Production:</h3>
-                <h3 id="amount">835 / Day</h3>
+                <h3 id="amount">{Math.ceil(cobaltBaseProduction)} / Day</h3>
               </PlanetCardProductionInfo>
               <CardStats>
                 <h3 id="description">Your Production</h3>
                 <h3 id="stat">{cobaltProduction} Cobalt / Day</h3>
                 <h3 id="description">Max Production</h3>
-                <h3 id="stat">29.8k Cobalt / Day</h3>
+                <h3 id="stat">
+                  {Math.ceil(cobaltBaseProduction * 35.7)} Cobalt / Day
+                </h3>
                 <h3 id="description">Your USD Equiv</h3>
                 <h3 id="stat">
                   $
@@ -384,13 +394,15 @@ const CosmosBody = () => {
               <PlanetCardProductionInfo>
                 <img src="../../assets/silver.png" alt="" />
                 <h3 id="production">Production:</h3>
-                <h3 id="amount">699 / Day</h3>
+                <h3 id="amount">{Math.floor(silverBaseProduction)} / Day</h3>
               </PlanetCardProductionInfo>
               <CardStats>
                 <h3 id="description">Your Production</h3>
                 <h3 id="stat">{silverProduction} Silver / Day</h3>
                 <h3 id="description">Max Production</h3>
-                <h3 id="stat">24.99k Silver / Day</h3>
+                <h3 id="stat">
+                  {Math.ceil(silverBaseProduction * 35.7)} Silver / Day
+                </h3>
                 <h3 id="description">Your USD Equiv</h3>
                 <h3 id="stat">
                   $
