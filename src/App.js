@@ -31,7 +31,7 @@ function App() {
             method: "wallet_addEthereumChain",
             params: [
               {
-                chainName: "Fantom Testnet",
+                chainName: "Fantom Opera Mainnet",
                 chainId: "0xfa",
                 nativeCurrency: {
                   name: "Fantom Opera Mainnet",
