@@ -248,6 +248,12 @@ const DashboardBody = () => {
           amt = amt + +data["result"];
         }
       });
+    await valettaContract.methods
+      .unlockedQuantity()
+      .call()
+      .then((result) => {
+        amt = amt + +result;
+      });
     setStakedAmount(amt);
   }
 
@@ -415,7 +421,7 @@ const DashboardBody = () => {
     updateState();
     const intervalId = setInterval(() => {
       updateState();
-    }, 10000);
+    }, 15000);
     return () => clearInterval(intervalId);
     // eslint-disable-next-line
   }, []);
