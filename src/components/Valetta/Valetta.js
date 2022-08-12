@@ -30,6 +30,7 @@ const ValettaBody = () => {
   const [pageLoaded, setPageLoaded] = useState(false);
   const [berylliumReadyToCollect, setBerylliumReadyToCllect] = useState(0);
   const [unlocked, setUnlocked] = useState(false);
+  const [miningStatus, setMiningStatus] = useState("Idle");
   const [forceDisableButton, setForceDisableButton] = useState(false);
   const [approveEnergyDisable, setApproveEnergyDisable] = useState(false);
   const [unlockEnergyDisable, setUnlockEnergyDisable] = useState(false);
@@ -71,6 +72,11 @@ const ValettaBody = () => {
       .then((result) => {
         const collect = +ethers.utils.formatEther(result);
         setBerylliumReadyToCllect(collect);
+        if (collect === "60") {
+          setMiningStatus("At Capacity");
+        } else if (collect !== "0") {
+          setMiningStatus("Mining");
+        }
       });
   }
 
@@ -185,9 +191,9 @@ const ValettaBody = () => {
                   </PlanetTitleContainer>
                   <Line width="320px" />
                   <Space height="25px" />
-                  <DescriptionRow miningStatus="Idle">
+                  <DescriptionRow miningStatus={miningStatus}>
                     <h3 id="description">Status</h3>
-                    <h3 id="value">Idle</h3>
+                    <h3 id="value">{miningStatus}</h3>
                   </DescriptionRow>
                   <DescriptionRow>
                     <h3 id="description">Collected</h3>

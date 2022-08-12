@@ -26,10 +26,12 @@ import {
   BasicButton,
 } from "../../globalStyles";
 import { AsteroidDrillPower } from "../../stats/DrillStats";
+import { ValettaProduction } from "../../stats/ValettaStats";
 import {
   getCybeleContract,
   getGadesContract,
   getOberonContract,
+  getValettaContract,
   isConnected,
   sleep,
 } from "../../Web3Client";
@@ -68,12 +70,15 @@ const DashboardBody = () => {
   const [oberonEarnings, setOberonEarnings] = useState(0);
   const [cybeleProduction, setCybeleProduction] = useState(0);
   const [cybeleEarnings, setCybeleEarnings] = useState(0);
+  const [valettaProduction, setValettaProduction] = useState(0);
+  const [valettaEarnings, setValettaEarnings] = useState(0);
   const [cscInWallet, setCscInWallet] = useState(0);
   const [gemInWallet, setGemInWallet] = useState(0);
 
   const gadesContract = getGadesContract();
   const oberonContract = getOberonContract();
   const cybeleContract = getCybeleContract();
+  const valettaContract = getValettaContract();
 
   async function handleAddCSCToMM() {
     try {
@@ -365,12 +370,37 @@ const DashboardBody = () => {
       });
   }
 
+  async function getValettaProduction() {
+    if (!isConnected()) return;
+    let baseProduction = 0;
+    let unlocked = false;
+    const addr = await injected.getAccount();
+    await valettaContract.methods
+      .unlocked(addr)
+      .call()
+      .then((result) => {
+        unlocked = result;
+      });
+    if (unlocked) {
+      await valettaContract.methods
+        .userProductionLevel(addr)
+        .call()
+        .then((result) => {
+          baseProduction = ValettaProduction[result];
+          setValettaProduction(baseProduction);
+          setValettaEarnings(((baseProduction / 355) * 1000) / 1000);
+        });
+    }
+  }
+
   async function updateState() {
     await getCosmicCashPrice();
     await sleep(500);
     await getGemPrice();
     await sleep(500);
     await getTreasuryValue();
+    await sleep(500);
+    await getValettaProduction();
     await sleep(500);
     await getStakedAmount();
     await sleep(500);
@@ -422,6 +452,17 @@ const DashboardBody = () => {
           <IncomeLine />
           <ResourceIncomeTable>
             <ResourceItem>
+              <img src="../../assets/beryllium.png" alt="" />
+              <p>
+                {valettaProduction} Beryllium ≈ $
+                {Math.floor(valettaEarnings * cosmicCashPrice * 1000) / 1000}{" "}
+                daily
+              </p>
+              <Link to="cosmos/valetta">
+                <BasicButton>View</BasicButton>
+              </Link>
+            </ResourceItem>
+            <ResourceItem>
               <img src="../../assets/iron.png" alt="" />
               <p>
                 {gadesProduction} Iron ≈ $
@@ -450,7 +491,7 @@ const DashboardBody = () => {
                 {Math.floor(cybeleEarnings * cosmicCashPrice * 1000) / 1000}{" "}
                 daily
               </p>
-              <Link to="cosmos">
+              <Link to="cosmos/cybele">
                 <BasicButton>View</BasicButton>
               </Link>
             </ResourceItem>
@@ -461,7 +502,10 @@ const DashboardBody = () => {
               <p>
                 $
                 {Math.floor(
-                  (gadesEarnings + oberonEarnings + cybeleEarnings) *
+                  (gadesEarnings +
+                    oberonEarnings +
+                    cybeleEarnings +
+                    valettaEarnings) *
                     cosmicCashPrice *
                     100
                 ) / 100}{" "}
@@ -472,7 +516,10 @@ const DashboardBody = () => {
               <p>
                 $
                 {Math.floor(
-                  (gadesEarnings + oberonEarnings + cybeleEarnings) *
+                  (gadesEarnings +
+                    oberonEarnings +
+                    cybeleEarnings +
+                    valettaEarnings) *
                     cosmicCashPrice *
                     7 *
                     100
@@ -484,7 +531,10 @@ const DashboardBody = () => {
               <p>
                 $
                 {Math.floor(
-                  (gadesEarnings + oberonEarnings + cybeleEarnings) *
+                  (gadesEarnings +
+                    oberonEarnings +
+                    cybeleEarnings +
+                    valettaEarnings) *
                     cosmicCashPrice *
                     30 *
                     100
@@ -496,7 +546,10 @@ const DashboardBody = () => {
               <p>
                 $
                 {Math.floor(
-                  (gadesEarnings + oberonEarnings + cybeleEarnings) *
+                  (gadesEarnings +
+                    oberonEarnings +
+                    cybeleEarnings +
+                    valettaEarnings) *
                     cosmicCashPrice *
                     365 *
                     100
