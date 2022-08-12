@@ -1,5 +1,6 @@
 import Web3 from "web3";
 import {
+  BerylliumAddress,
   CobaltAddress,
   converterAddress,
   cosmicCashAddress,
@@ -11,7 +12,9 @@ import {
   mineEmpireDrillAddress,
   OberonAddress,
   SilverAddress,
+  ValettaAddress,
 } from "./contracts/Addresses";
+import { BerylliumABI } from "./contracts/Beryllium";
 import { CobaltABI } from "./contracts/Cobalt";
 import { converterABI } from "./contracts/Converter";
 import { cosmicCashABI } from "./contracts/CosmicCash";
@@ -23,6 +26,7 @@ import { ironABI } from "./contracts/Iron";
 import { mineEmpireDrillABI } from "./contracts/MineEmpireDrill";
 import { OberonABI } from "./contracts/Oberon";
 import { SilverABI } from "./contracts/Silver";
+import { ValettaABI } from "./contracts/Valetta";
 
 export let accountAddress = "";
 
@@ -167,6 +171,18 @@ export const getCybeleContract = () => {
 export const getSilverContract = () => {
   var web3 = new Web3(window.ethereum);
   const contract = new web3.eth.Contract(SilverABI, SilverAddress);
+  return contract;
+};
+
+export const getValettaContract = () => {
+  var web3 = new Web3(window.ethereum);
+  const contract = new web3.eth.Contract(ValettaABI, ValettaAddress);
+  return contract;
+};
+
+export const getBerylliumAddress = () => {
+  var web3 = new Web3(window.ethereum);
+  const contract = new web3.eth.Contract(BerylliumABI, BerylliumAddress);
   return contract;
 };
 

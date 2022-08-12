@@ -21,6 +21,7 @@ import {
   getCybeleContract,
   getGadesContract,
   getOberonContract,
+  getValettaContract,
   isConnected,
 } from "../../Web3Client";
 import { injected } from "../../connectors";
@@ -31,6 +32,7 @@ import { GadesCapacity } from "../../stats/GadesStats";
 import { cosmicCashAddress } from "../../contracts/Addresses";
 import { OberonCapacity } from "../../stats/OberonStats";
 import { CybeleCapacity } from "../../stats/CybeleStats";
+import { ValettaCapacity, ValettaProduction } from "../../stats/ValettaStats";
 
 const CosmosBody = () => {
   const [connected, setConnected] = useState(false);
@@ -54,11 +56,19 @@ const CosmosBody = () => {
   const [silverProduction, setSilverProduction] = useState(0);
   const [silverBaseProduction, setSilverBaseProduction] = useState(0);
   const [cscProductionCybele, setCscProductionCybele] = useState(0);
+  const [valettaCapacityLevel, setValettaCapacityLevel] = useState(0);
+  const [valettaProductionLevel, setValettaProductionLevel] = useState(0);
+  const [berylliumProduction, setBerylliumProduction] = useState(0);
+  const [valettaCapacity, setValettaCapacity] = useState(0);
+  const [berylliumReadyToCollect, setBerylliumReadyToCllect] = useState(0);
+  const [cscProductionValetta, setCscProductionValetta] = useState(0);
+
   const { activate } = useWeb3React();
 
   const gadesContract = getGadesContract();
   const oberonContract = getOberonContract();
   const cybeleContract = getCybeleContract();
+  const valettaContract = getValettaContract();
 
   async function getStakedStats() {
     const addr = await injected.getAccount();
@@ -227,12 +237,54 @@ const CosmosBody = () => {
     if (checkStaked) await getCybeleStakedStats();
   }
 
+  async function getValettaStats() {
+    const addr = await injected.getAccount();
+    let unlocked = false;
+    let caplevel = 0;
+    let prodlevel = 0;
+    await valettaContract.methods
+      .unlocked(addr)
+      .call()
+      .then((result) => {
+        unlocked = result;
+      });
+    if (unlocked) {
+      await valettaContract.methods
+        .userCapacityLevel(addr)
+        .call()
+        .then((result) => {
+          caplevel = +result;
+          setValettaCapacityLevel(caplevel + 1);
+          setValettaCapacity(ValettaCapacity[caplevel]);
+        });
+      await valettaContract.methods
+        .userProductionLevel(addr)
+        .call()
+        .then((result) => {
+          prodlevel = +result;
+          setValettaProductionLevel(prodlevel + 1);
+          setBerylliumProduction(ValettaProduction[prodlevel]);
+          setCscProductionValetta(
+            Math.ceil((ValettaProduction[prodlevel] / 355) * 100) / 100
+          );
+        });
+    }
+    await valettaContract.methods
+      .getAccumulatedBeryllium()
+      .call({ from: addr })
+      .then((result) => {
+        const collect = +ethers.utils.formatEther(result);
+        setBerylliumReadyToCllect(collect);
+      });
+  }
+
   async function updateState() {
     if (await isConnected()) {
       setConnected(true);
       await getGadesStats();
       await getOberonStats();
       await getCybeleStats();
+      await getValettaStats();
     }
     getCosmicCashPrice();
   }
@@ -283,6 +335,52 @@ const CosmosBody = () => {
         </Container>
         <Container>
           <BodyContainer>
+            <PlanetCard>
+              <PlanetCardImgContainer>
+                <img src="../../assets/valetta.png" alt="" />
+              </PlanetCardImgContainer>
+              <PlanetCardTitleContainer>
+                <h1>Valetta</h1>
+                <h3>Asteroid</h3>
+                <h3>Produces Beryllium</h3>
+              </PlanetCardTitleContainer>
+              <Line width="360px" />
+              <PlanetCardProductionInfo>
+                <img src="../../assets/beryllium.png" alt="" />
+                <h3 id="production">Production:</h3>
+                <h3 id="amount">31 / Day</h3>
+              </PlanetCardProductionInfo>
+              <CardStats>
+                <h3 id="description">Your Production</h3>
+                <h3 id="stat">{berylliumProduction} Beryllium / Day</h3>
+                <h3 id="description">Max Production</h3>
+                <h3 id="stat">55 Beryllium / Day</h3>
+                <h3 id="description">Your USD Equiv</h3>
+                <h3 id="stat">
+                  $
+                  {Math.floor(cscProductionValetta * cosmicCashPrice * 100) /
+                    100}{" "}
+                  / Day
+                </h3>
+                <h3 id="description">Production Level</h3>
+                <h3 id="stat">{valettaProductionLevel}</h3>
+                <h3 id="description">Capacity Level</h3>
+                <h3 id="stat">{valettaCapacityLevel}</h3>
+                <h3 id="description">Ready to Collect</h3>
+                <h3 id="stat">
+                  {berylliumReadyToCollect} / {valettaCapacity}
+                </h3>
+              </CardStats>
+              <ButtonContainer>
+                {connected ? (
+                  <Link to="gades">
+                    <Button>View</Button>
+                  </Link>
+                ) : (
+                  <Button onClick={() => activate(injected)}>Connect</Button>
+                )}
+              </ButtonContainer>
+            </PlanetCard>
             <PlanetCard>
               <PlanetCardImgContainer>
                 <img src="../../assets/gades.png" alt="" />
