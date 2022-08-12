@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  getBerylliumContract,
   getCobaltContract,
   getCosmicCashContract,
   getDailyEnergyContract,
@@ -48,15 +49,17 @@ const Navbar = () => {
   const [ironBal, setIronBal] = useState(0);
   const [cobaltBal, setCobaltBal] = useState(0);
   const [silverBal, setSilverBal] = useState(0);
-  const dailyEnergyContract = getDailyEnergyContract();
+  const [berylliumBal, setBerylliumBal] = useState(0);
   const [correctNetwork, setCorrectNetwork] = useState(true);
   const [cosmicCashPrice, setCosmicCashPrice] = useState(0);
 
+  const dailyEnergyContract = getDailyEnergyContract();
   const energyContract = getEnergyContract();
   const cscContract = getCosmicCashContract();
   const ironContract = getIronContract();
   const cobaltContract = getCobaltContract();
   const silverContract = getSilverContract();
+  const berylliumContract = getBerylliumContract();
 
   const { activate } = useWeb3React();
 
@@ -109,6 +112,13 @@ const Navbar = () => {
       .then((result) => {
         const amt = Math.floor(+ethers.utils.formatEther(result));
         setSilverBal(amt);
+      });
+    await berylliumContract.methods
+      .balanceOf(addr)
+      .call()
+      .then((result) => {
+        const amt = Math.floor(+ethers.utils.formatEther(result) * 100) / 100;
+        setBerylliumBal(amt);
       });
   }
 
@@ -285,6 +295,16 @@ const Navbar = () => {
                             {silverBal} ($
                             {Math.ceil(
                               (silverBal / 2076) * cosmicCashPrice * 100
+                            ) / 100}
+                            )
+                          </p>
+                        </BalanceItem>
+                        <BalanceItem>
+                          <img src="../../assets/beryllium.png" alt="" />
+                          <p>
+                            {berylliumBal} ($
+                            {Math.ceil(
+                              (berylliumBal / 355) * cosmicCashPrice * 100
                             ) / 100}
                             )
                           </p>
