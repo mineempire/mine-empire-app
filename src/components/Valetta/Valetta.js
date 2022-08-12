@@ -148,39 +148,39 @@ const ValettaBody = () => {
         <Container>
           <BodyContainer>
             <PlanetBodyContainer>
+              <DescriptionContainer>
+                <PlanetTitleAndLevel>
+                  <h1 id="title">Production</h1>
+                  <h1 id="title">Lv1</h1>
+                </PlanetTitleAndLevel>
+                <Line width="320px" />
+                <Space height="30px" />
+                <DescriptionRow>
+                  <h3 id="description">Resource</h3>
+                  <h3 id="value">Beryllium</h3>
+                </DescriptionRow>
+                <DescriptionRow>
+                  <h3 id="description">Rate</h3>
+                  <h3 id="value">31 / Day</h3>
+                </DescriptionRow>
+                <DescriptionRow>
+                  <h3 id="description">Next Level Rate</h3>
+                  <h3 id="value">40 / Day</h3>
+                </DescriptionRow>
+                <DescriptionRow>
+                  <h3 id="description">Upgrade Cost</h3>
+                  <h3 id="value">3 Miner Tickets</h3>
+                </DescriptionRow>
+                <PlanetButtonContainer>
+                  <ButtonContainer>
+                    <Button disable="true">Approve</Button>
+                  </ButtonContainer>
+                  <ButtonContainer>
+                    <Button disable="true">Upgrade</Button>
+                  </ButtonContainer>
+                </PlanetButtonContainer>
+              </DescriptionContainer>
               <PlanetBody>
-                <DescriptionContainer>
-                  <PlanetTitleAndLevel>
-                    <h1 id="title">Production</h1>
-                    <h1 id="title">Lv1</h1>
-                  </PlanetTitleAndLevel>
-                  <Line width="320px" />
-                  <Space height="30px" />
-                  <DescriptionRow>
-                    <h3 id="description">Resource</h3>
-                    <h3 id="value">Beryllium</h3>
-                  </DescriptionRow>
-                  <DescriptionRow>
-                    <h3 id="description">Rate</h3>
-                    <h3 id="value">31 / Day</h3>
-                  </DescriptionRow>
-                  <DescriptionRow>
-                    <h3 id="description">Next Level Rate</h3>
-                    <h3 id="value">40 / Day</h3>
-                  </DescriptionRow>
-                  <DescriptionRow>
-                    <h3 id="description">Upgrade Cost</h3>
-                    <h3 id="value">3 Miner Tickets</h3>
-                  </DescriptionRow>
-                  <PlanetButtonContainer>
-                    <ButtonContainer>
-                      <Button disable="true">Approve</Button>
-                    </ButtonContainer>
-                    <ButtonContainer>
-                      <Button disable="true">Upgrade</Button>
-                    </ButtonContainer>
-                  </PlanetButtonContainer>
-                </DescriptionContainer>
                 <StakeContainer>
                   <PlanetTitleContainer>
                     <img src="../../assets/valetta.png" alt="" />
@@ -248,39 +248,39 @@ const ValettaBody = () => {
                     </>
                   )}
                 </StakeContainer>
-                <DescriptionContainer>
-                  <PlanetTitleAndLevel>
-                    <h1 id="title">Capacity</h1>
-                    <h1 id="title">Lv1</h1>
-                  </PlanetTitleAndLevel>
-                  <Line width="320px" />
-                  <Space height="30px" />
-                  <DescriptionRow>
-                    <h3 id="description">Type</h3>
-                    <h3 id="value">Asteroid</h3>
-                  </DescriptionRow>
-                  <DescriptionRow>
-                    <h3 id="description">Capacity</h3>
-                    <h3 id="value">60</h3>
-                  </DescriptionRow>
-                  <DescriptionRow>
-                    <h3 id="description">Next Level Capacity</h3>
-                    <h3 id="value">90</h3>
-                  </DescriptionRow>
-                  <DescriptionRow>
-                    <h3 id="description">Upgrade Cost</h3>
-                    <h3 id="value">1 Miner Ticket</h3>
-                  </DescriptionRow>
-                  <PlanetButtonContainer>
-                    <ButtonContainer>
-                      <Button disable="true">Approve</Button>
-                    </ButtonContainer>
-                    <ButtonContainer>
-                      <Button disable="true">Upgrade</Button>
-                    </ButtonContainer>
-                  </PlanetButtonContainer>
-                </DescriptionContainer>
               </PlanetBody>
+              <DescriptionContainer>
+                <PlanetTitleAndLevel>
+                  <h1 id="title">Capacity</h1>
+                  <h1 id="title">Lv1</h1>
+                </PlanetTitleAndLevel>
+                <Line width="320px" />
+                <Space height="30px" />
+                <DescriptionRow>
+                  <h3 id="description">Type</h3>
+                  <h3 id="value">Asteroid</h3>
+                </DescriptionRow>
+                <DescriptionRow>
+                  <h3 id="description">Capacity</h3>
+                  <h3 id="value">60</h3>
+                </DescriptionRow>
+                <DescriptionRow>
+                  <h3 id="description">Next Level Capacity</h3>
+                  <h3 id="value">90</h3>
+                </DescriptionRow>
+                <DescriptionRow>
+                  <h3 id="description">Upgrade Cost</h3>
+                  <h3 id="value">1 Miner Ticket</h3>
+                </DescriptionRow>
+                <PlanetButtonContainer>
+                  <ButtonContainer>
+                    <Button disable="true">Approve</Button>
+                  </ButtonContainer>
+                  <ButtonContainer>
+                    <Button disable="true">Upgrade</Button>
+                  </ButtonContainer>
+                </PlanetButtonContainer>
+              </DescriptionContainer>
             </PlanetBodyContainer>
           </BodyContainer>
         </Container>
