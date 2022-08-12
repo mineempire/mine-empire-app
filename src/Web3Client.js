@@ -180,7 +180,7 @@ export const getValettaContract = () => {
   return contract;
 };
 
-export const getBerylliumAddress = () => {
+export const getBerylliumContract = () => {
   var web3 = new Web3(window.ethereum);
   const contract = new web3.eth.Contract(BerylliumABI, BerylliumAddress);
   return contract;

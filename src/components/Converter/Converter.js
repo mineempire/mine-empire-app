@@ -31,6 +31,7 @@ import {
 } from "./ConverterStyles";
 import { useEffect, useState } from "react";
 import {
+  getBerylliumContract,
   getCobaltContract,
   getConverterContract,
   getCosmicCashContract,
@@ -42,6 +43,7 @@ import { useWeb3React } from "@web3-react/core";
 import { injected } from "../../connectors";
 import { ethers } from "ethers";
 import {
+  BerylliumAddress,
   CobaltAddress,
   converterAddress,
   ironAddress,
@@ -60,6 +62,8 @@ const ConverterBody = () => {
   const [cobaltQuantity, setCobaltQuantity] = useState(0);
   const [silverQuantity, setSilverQuantity] = useState(0);
   const [approvedSilver, setApprovedSilver] = useState(false);
+  const [berylliumQuantity, setBerylliumQuantity] = useState(0);
+  const [approvedBeryllium, setApprovedBeryllium] = useState(false);
   const [conversionRate, setConversionRate] = useState(13809);
   const [bismuthQuantity] = useState(0);
   const [rubyQuantity] = useState(0);
@@ -72,6 +76,7 @@ const ConverterBody = () => {
   const ironContract = getIronContract();
   const cobaltContract = getCobaltContract();
   const silverContract = getSilverContract();
+  const berylliumContract = getBerylliumContract();
   const cscContract = getCosmicCashContract();
   const converterContract = getConverterContract();
 
@@ -149,10 +154,37 @@ const ConverterBody = () => {
       });
   }
 
+  async function getApprovedBeryllium() {
+    const addr = await injected.getAccount();
+    await berylliumContract.methods
+      .allowance(addr, converterAddress)
+      .call()
+      .then((result) => {
+        const amt = ethers.utils.formatEther(result);
+        if (+amt < 10000000) {
+          setApprovedBeryllium(false);
+        } else {
+          setApprovedBeryllium(true);
+        }
+      });
+  }
+
+  async function getBerylliumBalance() {
+    const addr = await injected.getAccount();
+    await berylliumContract.methods
+      .balanceOf(addr)
+      .call()
+      .then((result) => {
+        const amt = Math.floor(+ethers.utils.formatEther(result) * 100) / 100;
+        setBerylliumQuantity(amt);
+      });
+  }
+
   async function getApproves() {
     await getApprovedIron();
     await getApprovedCobalt();
     await getApprovedSilver();
+    await getApprovedBeryllium();
   }
 
   async function getBalances() {
@@ -180,6 +212,7 @@ const ConverterBody = () => {
       });
     await getCobaltBalance();
     await getSilverBalance();
+    await getBerylliumBalance();
   }
 
   async function updateState() {
@@ -223,6 +256,11 @@ const ConverterBody = () => {
     } else if (id === 4) {
       setSelectedResource("ruby");
       setSelectedQuantity(rubyQuantity);
+    } else if (id === 5) {
+      setSelectedResource("beryllium");
+      setSelectedQuantity(berylliumQuantity);
+      setConversionRate(355);
+      setSelectedApproved(approvedBeryllium);
     }
   }
 
@@ -261,6 +299,12 @@ const ConverterBody = () => {
         .send({ from: addr })
         .then()
         .catch((err) => console.log(err));
+    } else if (selectedResource === "beryllium") {
+      await berylliumContract.methods
+        .approve(converterAddress, "1000000000000000000000000000")
+        .send({ from: addr })
+        .then()
+        .catch((err) => console.log(err));
     }
     await updateState();
     setDisableButtons(false);
@@ -268,6 +312,7 @@ const ConverterBody = () => {
 
   async function handleConvert() {
     const addr = await injected.getAccount();
+    console.log("here");
     if (selectedResource === "iron") {
       await converterContract.methods
         .convert(ironAddress, inputQuantity + "000000000000000000")
@@ -283,6 +328,12 @@ const ConverterBody = () => {
     } else if (selectedResource === "silver") {
       await converterContract.methods
         .convert(SilverAddress, inputQuantity + "000000000000000000")
+        .send({ from: addr })
+        .then()
+        .catch((err) => console.log(err));
+    } else if (selectedResource === "beryllium") {
+      await converterContract.methods
+        .convert(BerylliumAddress, String(inputQuantity * 1000000000000000000))
         .send({ from: addr })
         .then()
         .catch((err) => console.log(err));
@@ -360,6 +411,15 @@ const ConverterBody = () => {
                         <p id="name">Ruby</p>
                       </SelectResourceNameImg>
                       <p id="qt">{rubyQuantity}</p>
+                    </SelectResourceMenuItem>
+                    <SelectResourceMenuItem
+                      onClick={() => handleSelectResource(5)}
+                    >
+                      <SelectResourceNameImg>
+                        <img src="../../assets/beryllium.png" alt="" />
+                        <p id="name">Beryllium</p>
+                      </SelectResourceNameImg>
+                      <p id="qt">{berylliumQuantity}</p>
                     </SelectResourceMenuItem>
                   </SelectResourceMenuBody>
                 </SelectResourceMenu>
