@@ -373,7 +373,7 @@ const CosmosBody = () => {
               </CardStats>
               <ButtonContainer>
                 {connected ? (
-                  <Link to="gades">
+                  <Link to="valetta">
                     <Button>View</Button>
                   </Link>
                 ) : (

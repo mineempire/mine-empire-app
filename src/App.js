@@ -16,6 +16,7 @@ import CanopsysPrime from "./pages/CanopsysPrime";
 import { useEffect } from "react";
 import Rewards from "./pages/Rewards";
 import Cybele from "./pages/Cybele";
+import Valetta from "./pages/Valetta";
 
 function App() {
   const switchNetwork = async () => {
@@ -64,6 +65,7 @@ function App() {
           <Route path="/cosmos/oberon" element={<Oberon />} />
           <Route path="/cosmos/canopsysprime" element={<CanopsysPrime />} />
           <Route path="/cosmos/cybele" element={<Cybele />} />
+          <Route path="/cosmos/valetta" element={<Valetta />} />
           <Route path="/market" element={<Market />} />
           <Route path="/refinery" element={<Refinery />} />
           <Route path="/converter" element={<Converter />} />

@@ -36,6 +36,24 @@ export const PlanetTitle = styled.div`
   }
 `;
 
+export const PlanetTitleAndLevel = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+  padding: 15px;
+  h1#title {
+    color: #fff;
+  }
+
+  h1#description {
+    color: #949494;
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
+`;
+
 export const DescriptionRow = styled.div`
   padding: 5px 25px;
   display: flex;
