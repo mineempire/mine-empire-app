@@ -13,6 +13,7 @@ import {
   ButtonContainer,
   ButtonGray,
   BasicButton,
+  Loading,
 } from "../../globalStyles";
 import {
   getCybeleContract,
@@ -44,6 +45,7 @@ import DrillSelectorMenu from "../Planet/DrillSelectorMenu";
 import { RightFlexDiv } from "../Market/MarketStyles";
 
 const CybeleBody = () => {
+  const [pageLoaded, setPageLoaded] = useState(false);
   const [disableButtons, setDisableButtons] = useState(false);
   const [capacity, setCapacity] = useState(0);
   const [miningStatus, setMiningStatus] = useState("Idle");
@@ -218,6 +220,7 @@ const CybeleBody = () => {
     await getCosmicCashBalance();
     await getCosmicCashApproved();
     await getCybeleMetadata();
+    setPageLoaded(true);
   }
 
   useEffect(() => {
@@ -315,7 +318,7 @@ const CybeleBody = () => {
     setDrillSelected(drillId);
   }
 
-  return (
+  return pageLoaded ? (
     <>
       <Section>
         <Container>
@@ -569,6 +572,14 @@ const CybeleBody = () => {
             </ConverterContainer>
           </BodyContainer>
         </Container>
+      </Section>
+    </>
+  ) : (
+    <>
+      <Section>
+        <Loading>
+          <h1>Loading...</h1>
+        </Loading>
       </Section>
     </>
   );

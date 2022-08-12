@@ -17,6 +17,7 @@ import {
   ButtonContainer,
   ButtonGray,
   BasicButton,
+  Loading,
 } from "../../globalStyles";
 import {
   getCosmicCashContract,
@@ -46,6 +47,7 @@ import { OberonCapacity, OberonUpgradeCost } from "../../stats/OberonStats";
 import { AsteroidDrillPower } from "../../stats/DrillStats";
 
 const OberonBody = () => {
+  const [pageLoaded, setPageLoaded] = useState(false);
   const [disableButtons, setDisableButtons] = useState(false);
   const [cosmicCashBalance, setCosmicCashBalance] = useState(0);
   const [cosmicCashApproved, setCosmicCashApproved] = useState(false);
@@ -272,6 +274,7 @@ const OberonBody = () => {
     await getEnergyBalance();
     await getEnergyApproved();
     await getOberonMetadata();
+    setPageLoaded(true);
   }
 
   useEffect(() => {
@@ -411,7 +414,7 @@ const OberonBody = () => {
     setShowSelect(false);
   };
 
-  return (
+  return pageLoaded ? (
     <>
       <Section>
         <Container>
@@ -707,6 +710,14 @@ const OberonBody = () => {
             </ConverterContainer>
           </BodyContainer>
         </Container>
+      </Section>
+    </>
+  ) : (
+    <>
+      <Section>
+        <Loading>
+          <h1>Loading...</h1>
+        </Loading>
       </Section>
     </>
   );

@@ -18,6 +18,7 @@ import {
   Space,
   ButtonContainer,
   ButtonGray,
+  Loading,
 } from "../../globalStyles";
 import {
   getCosmicCashContract,
@@ -42,6 +43,7 @@ import {
 
 const GadesBody = () => {
   let selectedAddress = "";
+  const [pageLoaded, setPageLoaded] = useState(false);
   const [cosmicCashBalance, setCosmicCashBalance] = useState(0);
   const [cosmicCashApproved, setCosmicCashApproved] = useState(false);
   const [upgradeCost, setUpgradeCost] = useState(0);
@@ -236,6 +238,7 @@ const GadesBody = () => {
     await getOwnedDrills();
     await getGadesMetadata();
     await getCosmicCashBalance();
+    setPageLoaded(true);
   }
 
   async function handleStake() {
@@ -347,7 +350,7 @@ const GadesBody = () => {
     setShowSelect(false);
   };
 
-  return (
+  return pageLoaded ? (
     <>
       <Section>
         <Container>
@@ -588,6 +591,14 @@ const GadesBody = () => {
             </ConverterContainer>
           </BodyContainer>
         </Container>
+      </Section>
+    </>
+  ) : (
+    <>
+      <Section>
+        <Loading>
+          <h1>Loading...</h1>
+        </Loading>
       </Section>
     </>
   );

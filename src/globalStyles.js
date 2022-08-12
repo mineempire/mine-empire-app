@@ -165,4 +165,13 @@ export const Space = styled.div`
   height: ${({ height }) => (height ? height : "10px")};
 `;
 
+export const Loading = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  h1 {
+    color: #fff;
+  }
+`;
+
 export default GlobalStyle;
