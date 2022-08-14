@@ -30,11 +30,11 @@ const ValettaBody = () => {
   const [pageLoaded, setPageLoaded] = useState(false);
   const [berylliumReadyToCollect, setBerylliumReadyToCllect] = useState(0);
   const [unlocked, setUnlocked] = useState(false);
-  const [miningStatus, setMiningStatus] = useState("Idle");
   const [forceDisableButton, setForceDisableButton] = useState(false);
   const [approveEnergyDisable, setApproveEnergyDisable] = useState(false);
   const [unlockEnergyDisable, setUnlockEnergyDisable] = useState(false);
   const [collectDisabled, setCollectDisabled] = useState(false);
+  const [unlockedQuantity, setUnlockedQuantity] = useState(0);
 
   const valettaContract = getValettaContract();
   const energyContract = getEnergyContract();
@@ -72,17 +72,22 @@ const ValettaBody = () => {
       .then((result) => {
         const collect = +ethers.utils.formatEther(result);
         setBerylliumReadyToCllect(collect);
-        if (collect === "60") {
-          setMiningStatus("At Capacity");
-        } else if (collect !== "0") {
-          setMiningStatus("Mining");
-        }
+      });
+  }
+
+  async function checkUnlockedQuantity() {
+    await valettaContract.methods
+      .unlockedQuantity()
+      .call()
+      .then((result) => {
+        setUnlockedQuantity(result);
       });
   }
 
   async function updateState() {
     await checkUnlocked();
     await getAccumulatedBeryllium();
+    await checkUnlockedQuantity();
     setPageLoaded(true);
   }
 
@@ -191,9 +196,9 @@ const ValettaBody = () => {
                   </PlanetTitleContainer>
                   <Line width="320px" />
                   <Space height="25px" />
-                  <DescriptionRow miningStatus={miningStatus}>
-                    <h3 id="description">Status</h3>
-                    <h3 id="value">{miningStatus}</h3>
+                  <DescriptionRow>
+                    <h3 id="description">Total Unlocked</h3>
+                    <h3 id="value">{unlockedQuantity} / 500</h3>
                   </DescriptionRow>
                   <DescriptionRow>
                     <h3 id="description">Collected</h3>
@@ -238,7 +243,11 @@ const ValettaBody = () => {
                         </ButtonContainer>
                         <ButtonContainer>
                           <Button
-                            disable={unlockEnergyDisable || forceDisableButton}
+                            disable={
+                              unlockEnergyDisable ||
+                              forceDisableButton ||
+                              unlockedQuantity === "500"
+                            }
                             onClick={handleUnlockEnergy}
                           >
                             Unlock
