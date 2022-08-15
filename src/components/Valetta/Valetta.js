@@ -13,8 +13,16 @@ import {
   Space,
   TitleContainer,
 } from "../../globalStyles";
+import {
+  ValettaCapacity,
+  ValettaCapacityUpgrade,
+  ValettaProduction,
+  ValettaProductionUpgrade,
+} from "../../stats/ValettaStats";
 import { getEnergyContract, getValettaContract } from "../../Web3Client";
 import {
+  ConversionBox,
+  ConverterContainer,
   DescriptionContainer,
   DescriptionRow,
   PlanetBody,
@@ -35,6 +43,12 @@ const ValettaBody = () => {
   const [unlockEnergyDisable, setUnlockEnergyDisable] = useState(false);
   const [collectDisabled, setCollectDisabled] = useState(false);
   const [unlockedQuantity, setUnlockedQuantity] = useState(0);
+  const [productionLevel, setProductionLevel] = useState(0);
+  const [capacityLevel, setCapacityLevel] = useState(0);
+  const [disableProductionUpgrade, setDisableProductionUpgrade] =
+    useState(false);
+  const [disableCapacityUpgrade, setDisableCapacityUpgrade] = useState(false);
+  const [energyBal, setEnergyBal] = useState(0);
 
   const valettaContract = getValettaContract();
   const energyContract = getEnergyContract();
@@ -84,10 +98,39 @@ const ValettaBody = () => {
       });
   }
 
+  async function getLevels() {
+    const addr = await injected.getAccount();
+    await valettaContract.methods
+      .userCapacityLevel(addr)
+      .call()
+      .then((result) => {
+        setCapacityLevel(+result);
+      });
+    await valettaContract.methods
+      .userProductionLevel(addr)
+      .call()
+      .then((result) => {
+        setProductionLevel(+result);
+      });
+  }
+
+  async function getEnergyBal() {
+    const addr = await injected.getAccount();
+    await energyContract.methods
+      .balanceOf(addr)
+      .call()
+      .then((result) => {
+        const amt = Math.floor(+ethers.utils.formatEther(result));
+        setEnergyBal(amt);
+      });
+  }
+
   async function updateState() {
     await checkUnlocked();
     await getAccumulatedBeryllium();
     await checkUnlockedQuantity();
+    await getLevels();
+    await getEnergyBal();
     setPageLoaded(true);
   }
 
@@ -138,6 +181,42 @@ const ValettaBody = () => {
     setCollectDisabled(false);
   };
 
+  const handleUpgradeCapacity = async () => {
+    if (
+      !unlocked ||
+      disableCapacityUpgrade ||
+      capacityLevel === 2 ||
+      energyBal < ValettaCapacityUpgrade[capacityLevel]
+    )
+      return;
+    setDisableCapacityUpgrade(true);
+    const addr = await injected.getAccount();
+    await valettaContract.methods
+      .upgradeCapacity()
+      .send({ from: addr })
+      .catch((err) => console.log(err));
+    await updateState();
+    setDisableCapacityUpgrade(false);
+  };
+
+  const handleUpgradeProduction = async () => {
+    if (
+      !unlocked ||
+      disableProductionUpgrade ||
+      productionLevel === 2 ||
+      energyBal < ValettaProductionUpgrade[productionLevel]
+    )
+      return;
+    setDisableProductionUpgrade(true);
+    const addr = await injected.getAccount();
+    await valettaContract.methods
+      .upgradeProduction()
+      .send({ from: addr })
+      .catch((err) => console.log(err));
+    await updateState();
+    setDisableProductionUpgrade(false);
+  };
+
   return pageLoaded ? (
     <>
       <Section>
@@ -156,7 +235,7 @@ const ValettaBody = () => {
               <DescriptionContainer>
                 <PlanetTitleAndLevel>
                   <h1 id="title">Production</h1>
-                  <h1 id="title">Lv1</h1>
+                  <h1 id="title">Lv{unlocked ? productionLevel + 1 : 0}</h1>
                 </PlanetTitleAndLevel>
                 <Line width="320px" />
                 <Space height="30px" />
@@ -166,22 +245,39 @@ const ValettaBody = () => {
                 </DescriptionRow>
                 <DescriptionRow>
                   <h3 id="description">Rate</h3>
-                  <h3 id="value">31 / Day</h3>
+                  <h3 id="value">
+                    {unlocked ? ValettaProduction[productionLevel] : 0} / Day
+                  </h3>
                 </DescriptionRow>
                 <DescriptionRow>
                   <h3 id="description">Next Level Rate</h3>
-                  <h3 id="value">40 / Day</h3>
+                  <h3 id="value">
+                    {unlocked
+                      ? ValettaProduction[productionLevel + 1]
+                      : ValettaProduction[productionLevel]}{" "}
+                    / Day
+                  </h3>
                 </DescriptionRow>
                 <DescriptionRow>
                   <h3 id="description">Upgrade Cost</h3>
-                  <h3 id="value">3 Miner Tickets</h3>
+                  <h3 id="value">
+                    {unlocked ? ValettaProductionUpgrade[productionLevel] : 0}{" "}
+                    ENERGY
+                  </h3>
                 </DescriptionRow>
                 <PlanetButtonContainer>
                   <ButtonContainer>
-                    <Button disable="true">Approve</Button>
-                  </ButtonContainer>
-                  <ButtonContainer>
-                    <Button disable="true">Upgrade</Button>
+                    <Button
+                      onClick={handleUpgradeProduction}
+                      disable={
+                        !unlocked ||
+                        disableProductionUpgrade ||
+                        productionLevel === 2 ||
+                        energyBal < ValettaProductionUpgrade[productionLevel]
+                      }
+                    >
+                      {productionLevel < 2 ? "Upgrade" : "MAX"}
+                    </Button>
                   </ButtonContainer>
                 </PlanetButtonContainer>
               </DescriptionContainer>
@@ -198,20 +294,25 @@ const ValettaBody = () => {
                   <Space height="25px" />
                   <DescriptionRow>
                     <h3 id="description">Total Unlocked</h3>
-                    <h3 id="value">{unlockedQuantity} / 500</h3>
+                    <h3 id="value">{unlockedQuantity} / 700</h3>
                   </DescriptionRow>
                   <DescriptionRow>
                     <h3 id="description">Collected</h3>
-                    <h3 id="value">{berylliumReadyToCollect} / 60</h3>
+                    <h3 id="value">
+                      {berylliumReadyToCollect} /{" "}
+                      {ValettaCapacity[capacityLevel]}
+                    </h3>
                   </DescriptionRow>
                   {unlocked ? (
                     <>
                       <DescriptionRow>
                         <h3 id="description">Your Earning</h3>
                         <h3 id="value">
-                          {(Math.ceil((31 / 355) * 100) / 100).toLocaleString(
-                            "en-US"
-                          )}{" "}
+                          {(
+                            Math.ceil(
+                              (ValettaProduction[productionLevel] / 355) * 100
+                            ) / 100
+                          ).toLocaleString("en-US")}{" "}
                           CSC / Day
                         </h3>
                       </DescriptionRow>
@@ -261,7 +362,7 @@ const ValettaBody = () => {
               <DescriptionContainer>
                 <PlanetTitleAndLevel>
                   <h1 id="title">Capacity</h1>
-                  <h1 id="title">Lv1</h1>
+                  <h1 id="title">Lv{unlocked ? capacityLevel + 1 : 0}</h1>
                 </PlanetTitleAndLevel>
                 <Line width="320px" />
                 <Space height="30px" />
@@ -271,26 +372,54 @@ const ValettaBody = () => {
                 </DescriptionRow>
                 <DescriptionRow>
                   <h3 id="description">Capacity</h3>
-                  <h3 id="value">60</h3>
+                  <h3 id="value">
+                    {unlocked ? ValettaCapacity[capacityLevel] : 0}
+                  </h3>
                 </DescriptionRow>
                 <DescriptionRow>
                   <h3 id="description">Next Level Capacity</h3>
-                  <h3 id="value">90</h3>
+                  <h3 id="value">
+                    {unlocked
+                      ? ValettaCapacity[capacityLevel + 1]
+                      : ValettaCapacity[capacityLevel]}
+                  </h3>
                 </DescriptionRow>
                 <DescriptionRow>
                   <h3 id="description">Upgrade Cost</h3>
-                  <h3 id="value">1 Miner Ticket</h3>
+                  <h3 id="value">
+                    {unlocked ? ValettaCapacityUpgrade[capacityLevel] : 0}{" "}
+                    ENERGY
+                  </h3>
                 </DescriptionRow>
                 <PlanetButtonContainer>
                   <ButtonContainer>
-                    <Button disable="true">Approve</Button>
-                  </ButtonContainer>
-                  <ButtonContainer>
-                    <Button disable="true">Upgrade</Button>
+                    <Button
+                      onClick={handleUpgradeCapacity}
+                      disable={
+                        !unlocked ||
+                        disableCapacityUpgrade ||
+                        capacityLevel === 2 ||
+                        energyBal < ValettaCapacityUpgrade[capacityLevel]
+                      }
+                    >
+                      {capacityLevel < 2 ? "Upgrade" : "MAX"}
+                    </Button>
                   </ButtonContainer>
                 </PlanetButtonContainer>
               </DescriptionContainer>
             </PlanetBodyContainer>
+            <ConverterContainer>
+              <ConversionBox>
+                <img src="../../assets/beryllium.png" alt="" />
+                <p>1 = 0.002816901</p>
+                <img src="../../assets/csc-icon.png" alt="" />
+              </ConversionBox>
+              <ConversionBox>
+                <img src="../../assets/csc-icon.png" alt="" />
+                <p>1 = 335</p>
+                <img src="../../assets/beryllium.png" alt="" />
+              </ConversionBox>
+            </ConverterContainer>
           </BodyContainer>
         </Container>
       </Section>
