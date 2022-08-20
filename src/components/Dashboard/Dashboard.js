@@ -430,8 +430,18 @@ const DashboardBody = () => {
     <DashboardSection>
       <Container>
         <TitleContainer>
-          <h1>Mine Empire</h1>
-          <h3>The first emissionless, idle game built for passive income.</h3>
+          <h1>Mine Empire Development Paused</h1>
+          <h3>
+            Attention! The development of Mine Empire is paused indefinitely.
+          </h3>
+          <h3>
+            If you have spent money on the game, please open a ticket on our
+            Discord to request a refund.
+          </h3>
+          <h3>
+            Only those who purchased Cosmic Cash before our announcement are
+            eligible for a refund.
+          </h3>
         </TitleContainer>
       </Container>
       <DashboardContainer>
